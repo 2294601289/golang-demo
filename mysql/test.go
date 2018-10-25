@@ -21,6 +21,8 @@ func main() {
 
 func checkErr(err error) {
 	if err != nil {
-		panic(err)
+		panic("错误：",err)
 	}
 }
+
+
