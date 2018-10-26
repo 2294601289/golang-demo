@@ -3,6 +3,7 @@ import (
     "database/sql"
     _"github.com/go-sql-driver/mysql"
     "fmt"
+    "encoding/json"
 //    "log"
 )
 func main(){
@@ -12,19 +13,19 @@ func main(){
     check(err);
 
     //
-    var cpt caoptest
-    cpt.userno="0012"
-    cpt.username="柯南12"
-    cpt.password="0"
-    cpt.birthday="1993-05-06"
-    cpt.isvalid="1"
-    cpt.spellno="KN"
+    // var cpt caoptest
+    // cpt.userno="0012"
+    // cpt.username="柯南12"
+    // cpt.password="0"
+    // cpt.birthday="1993-05-06"
+    // cpt.isvalid="1"
+    // cpt.spellno="KN"
     //增加
     //insertcp(db,cpt);
     //修改
     //updatecp(db,cpt);
     //删除
-    deletecp(db,"0012");
+    //deletecp(db,"0012");
     //查询
     selectcp(db);
     //按照ID查询
@@ -44,70 +45,81 @@ func check(err error){
 }
 //结构体：参考数据库表定义变量
 type caoptest struct{
-    userno string
-    username string
-    password string
-    birthday string
-    isvalid string
-    spellno string
+    Userno string `json:"userno"`
+    Username string `json:"username"`
+    Password string `json:"password"`
+    Birthday string `json:"birthday"`
+    Isvalid string `json:"isvalid"`
+    Spellno string `json:"spellno"`
+}
+type cptjson struct{
+    Cptj []caoptest `json:"cptj"`
 }
 //查询
 func selectcp(db *sql.DB){
 	rows, err :=db.Query("select * from caoptest");
     check(err);
+    var cptjn cptjson;
     for rows.Next() {
         var cp caoptest;
-        err = rows.Scan(&cp.userno,&cp.username,&cp.password,&cp.birthday,&cp.isvalid,&cp.spellno);
+        err = rows.Scan(&cp.Userno,&cp.Username,&cp.Password,&cp.Birthday,&cp.Isvalid,&cp.Spellno);
         check(err);
         fmt.Println(cp);
+        cptjn.Cptj=append(cptjn.Cptj,caoptest{Userno:cp.Userno,Username:cp.Username,Password:cp.Password,Birthday:cp.Birthday,Isvalid:cp.Isvalid,Spellno:cp.Spellno});
+        //j,err:=json.Marshal(caoptest{Userno:cp.Userno,Username:cp.Username,Password:cp.Password,Birthday:cp.Birthday,Isvalid:cp.Isvalid,Spellno:cp.Spellno,});
+        check(err);
+        //fmt.Print(string(j));
      }
      rows.Close();
+     j,err:=json.Marshal(cptjn);
+     check(err);
+     fmt.Print(string(j));
 }
 //按照ID查询
-func selectcpOne(db *sql.DB,userno string){
-	rows, err :=db.Query("select * from caoptest where userno=?",userno);
-    check(err);
-    for rows.Next() {
-        var cp caoptest;
-        err = rows.Scan(&cp.userno,&cp.username,&cp.password,&cp.birthday,&cp.isvalid,&cp.spellno);
-        check(err);
-        fmt.Println(cp);
-     }
-     rows.Close();
-}
+// func selectcpOne(db *sql.DB,userno string){
+// 	rows, err :=db.Query("select * from caoptest where userno=?",userno);
+//     check(err);
+//     for rows.Next() {
+//         var cp caoptest;
+//         err = rows.Scan(&cp.userno,&cp.username,&cp.password,&cp.birthday,&cp.isvalid,&cp.spellno);
+//         check(err);
+//         fmt.Println(cp);
+//      }
+//      rows.Close();
+// }
 //增加
-func insertcp(db *sql.DB,cp caoptest){
-    stmt,err:=db.Prepare("INSERT INTO caoptest(userno,username,password,birthday,isvalid,spellno) VALUES(?,?,?,STR_TO_DATE(?,'%Y-%m-%d'),?,?)");
-    check(err);
-    res,err:=stmt.Exec(cp.userno,cp.username,cp.password,cp.birthday,cp.isvalid,cp.spellno);
-    check(err);
-    id,err :=res.LastInsertId();
-    check(err);
-    fmt.Println(id);
-    stmt.Close();
-}
+// func insertcp(db *sql.DB,cp caoptest){
+//     stmt,err:=db.Prepare("INSERT INTO caoptest(userno,username,password,birthday,isvalid,spellno) VALUES(?,?,?,STR_TO_DATE(?,'%Y-%m-%d'),?,?)");
+//     check(err);
+//     res,err:=stmt.Exec(cp.userno,cp.username,cp.password,cp.birthday,cp.isvalid,cp.spellno);
+//     check(err);
+//     id,err :=res.LastInsertId();
+//     check(err);
+//     fmt.Println(id);
+//     stmt.Close();
+// }
 //删除
-func deletecp(db *sql.DB , userno string){
-    stmt,err:=db.Prepare("DELETE FROM caoptest where userno=?");
-    check(err);
-     res,err:=stmt.Exec(userno);
-    check(err);
-    affect,err :=res.RowsAffected();
-    check(err);
-    fmt.Println(affect);
-    stmt.Close();
-}
+// func deletecp(db *sql.DB , userno string){
+//     stmt,err:=db.Prepare("DELETE FROM caoptest where userno=?");
+//     check(err);
+//      res,err:=stmt.Exec(userno);
+//     check(err);
+//     affect,err :=res.RowsAffected();
+//     check(err);
+//     fmt.Println(affect);
+//     stmt.Close();
+// }
 //修改
-func updatecp(db *sql.DB , cp caoptest){
-    stmt,err:=db.Prepare("UPDATE caoptest set username=?,password=?,birthday=STR_TO_DATE(?,'%Y-%m-%d'),isvalid=?,spellno=? where userno=?");
-    check(err);
-    res,err:=stmt.Exec(cp.username,cp.password,cp.birthday,cp.isvalid,cp.spellno,cp.userno);
-    check(err);
-    affect,err :=res.RowsAffected();
-    check(err);
-    fmt.Println(affect);
-    stmt.Close();
-}
+// func updatecp(db *sql.DB , cp caoptest){
+//     stmt,err:=db.Prepare("UPDATE caoptest set username=?,password=?,birthday=STR_TO_DATE(?,'%Y-%m-%d'),isvalid=?,spellno=? where userno=?");
+//     check(err);
+//     res,err:=stmt.Exec(cp.username,cp.password,cp.birthday,cp.isvalid,cp.spellno,cp.userno);
+//     check(err);
+//     affect,err :=res.RowsAffected();
+//     check(err);
+//     fmt.Println(affect);
+//     stmt.Close();
+// }
 
 ///表
 // CREATE TABLE caoptest(

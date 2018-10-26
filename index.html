@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>vue 起步练习</title>
+	<script src="vue.min.js"></script>
+</head>
+<body>
+	<div id="vue_det">
+		<h1>{{site}}</h1>
+		<a href="http://localhost:8080/api/v1/home">xxxxx</a>
+		<h1>{{m}}</h1>
+	</div>
+
+</body>
+<script type="text/javascript">
+	var vm=new Vue({
+		el:"#vue_det",
+		data:{
+			site : "菜鸟教程site",
+			m:""
+		}
+	})
+</script>
+<html>
