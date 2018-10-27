@@ -27,12 +27,10 @@ func main() {
 
 	v1 := app.Party("/v1", crs).AllowMethods(iris.MethodOptions) // <- important for the preflight.
 	{
-		v1.Get("/home", func(ctx iris.Context) {
+		v1.Get("/query", func(ctx iris.Context) {
 			var cpt string 
 			cpt = selectcp(db);
-			ctx.ViewData("m",cpt);
-			ctx.View("index.html");
-			//ctx.WriteString(cpt)
+			ctx.WriteString(cpt)
 		})
 		v1.Get("/about", func(ctx iris.Context) {
 			var cpt string 
@@ -40,7 +38,8 @@ func main() {
 			ctx.WriteString(cpt)
 		})
 		v1.Post("/send", func(ctx iris.Context) {
-			ctx.WriteString("sent")
+			
+			ctx.WriteString("updatedsend")
 		})
 		v1.Put("/send", func(ctx iris.Context) {
 			ctx.WriteString("updated")
@@ -50,7 +49,7 @@ func main() {
 		})
 	}
 
-	app.Run(iris.Addr("localhost:8080"))
+	app.Run(iris.Addr("localhost:8085"))
 }
 
 //错误检查方法
